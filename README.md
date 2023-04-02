@@ -1,2 +1,2 @@
-# ChatGPT in Tweeet
-ChatGPT との 会話ログを ツイートに埋め込む
+# ChatGPT in Tweet
+ChatGPT との 会話を ツイートに埋め込む
