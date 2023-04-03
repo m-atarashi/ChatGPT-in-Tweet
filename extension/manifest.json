@@ -4,6 +4,9 @@
     "version": "1.0",
     "description": "Embed interactions with ChatGPT in tweets.",
     "homepage_url": "https://github.com/apps/chat-in-tweet",
+    "permissions": [
+        "storage"
+    ],
     "content_scripts": [
         {
             "matches": [
@@ -11,7 +14,7 @@
             ],
             "run_at": "document_end",
             "js": [
-                "content.js"
+                "js/content.js"
             ]
         }
     ]

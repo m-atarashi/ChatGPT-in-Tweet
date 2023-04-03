@@ -1,23 +1,13 @@
 "use strict"
-
-const untilReady = () => {
-  return new Promise((resolve) => {
-    const intervalID = window.setInterval(() => {
-      if (document.readyState === "complete") {
-        window.clearInterval(intervalID)
-        resolve()
-      }
-    }, 1000)
-  })
-}
-
 ;(async () => {
-  await untilReady()
-  const tweetTab = insertTweetTab()
-  tweetTab.addEventListener("click", tweetChat)
+  await new Promise((resolve) => {
+    window.onload = () => resolve()
+  })
+  insertTweetTab().addEventListener("click", openPopup)
+  const observer = observeConversationSwitching()
 })()
 
-const IMG_PATH = "../../resources/img"
+const clientId = "Iv1.a482744747043357"
 
 const insertTweetTab = () => {
   const clearTab = document.querySelector("nav > div + a")
@@ -28,24 +18,53 @@ const insertTweetTab = () => {
   tweetTab.innerHTML += "Tweet this conversation"
   tweetTab.classList.add("chat-in-tweet")
   tweetTab.classList.add("tweet-conversation")
-
+  tweetTab.setAttribute("href", `https://github.com/login/oauth/authorize?client_id=${clientId}`)
   clearTab.parentNode.insertBefore(tweetTab, clearTab)
   return tweetTab
 }
 
-const createElementFromDomString = (domString) => {
-  const container = document.createElement("div")
-  container.innerHTML = domString
-  return container.firstChild
+const observeConversationSwitching = () => {
+  const container = document.querySelector("#__next")
+  const observer = new MutationObserver(() => {
+    observer.disconnect()
+    insertTweetTab().addEventListener("click", openPopup)
+    observer.observe(container, { attributes: true, childList: true })
+  })
+  observer.observe(container, { attributes: true, childList: true })
+  return observer
 }
 
-const getTitle = () => {
-  return document.querySelector("title").innerText
+const getCode = () => {
+  const urlParams = new URLSearchParams(window.location.search)
+  return urlParams.get("code")
 }
 
-const getPrologue = (size = 100) => {
-  return document.body.innerText.substring(0, size)
+const getAccessToken = (code) => {
+  if (code === "") return
+  const url = "https://github.com/login/oauth/access_token"
+  const params = {
+    param1: "value1",
+    param2: "value2",
+  }
+  const headers = new Headers()
+  headers.append("Content-Type", "application/json")
+
+  fetch(url, {
+    method: "GET",
+    headers: headers,
+    body: JSON.stringify(params),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok")
+      }
+      return response.json()
+    })
+    .then((data) => console.log(data))
+    .catch((error) => console.error(error))
 }
+
+const IMG_PATH = "../../resources/img"
 
 const cleanupHTMLSource = () => {
   const title = getTitle()
@@ -77,4 +96,20 @@ const cleanupHTMLSource = () => {
   return newHTML.innerHTML
 }
 
-const tweetChat = () => {}
+const getTitle = () => {
+  return document.querySelector("title").innerText
+}
+
+const getPrologue = (size = 100) => {
+  return document.body.innerText.substring(0, size)
+}
+
+const createElementFromDomString = (domString) => {
+  const container = document.createElement("div")
+  container.innerHTML = domString
+  return container.firstChild
+}
+
+const openPopup = () => {
+  console.log(location.href)
+}
