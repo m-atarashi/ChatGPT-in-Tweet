@@ -1,0 +1,18 @@
+{
+    "manifest_version": 3,
+    "name": "Chat-in-Tweet",
+    "version": "1.0",
+    "description": "Embed interactions with ChatGPT in tweets.",
+    "homepage_url": "https://github.com/apps/chat-in-tweet",
+    "content_scripts": [
+        {
+            "matches": [
+                "https://chat.openai.com/*"
+            ],
+            "run_at": "document_end",
+            "js": [
+                "content.js"
+            ]
+        }
+    ]
+}
