@@ -30,3 +30,11 @@ function cleanupHTMLSource() {
     newHTML.appendChild(newBody)
     return newHTML.innerHTML
 }
+
+function getTitle() {
+    return document.querySelector("title").innerText
+}
+
+function getPrologue() {
+    return document.body.innerText.substring(0, 100)
+}
