@@ -1,13 +1,12 @@
-"use strict"
-;(async () => {
-  await new Promise((resolve) => {
-    window.onload = () => resolve()
-  })
-  insertTweetTab().addEventListener("click", openPopup)
-  const observer = observeConversationSwitching()
-})()
-
 const clientId = "Iv1.a482744747043357"
+
+const openPopup = () => {
+  console.log(location.href)
+}
+
+const tweetTabOnClick = () => {
+    location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}`
+}
 
 const insertTweetTab = () => {
   const clearTab = document.querySelector("nav > div + a")
@@ -18,7 +17,7 @@ const insertTweetTab = () => {
   tweetTab.innerHTML += "Tweet this conversation"
   tweetTab.classList.add("chat-in-tweet")
   tweetTab.classList.add("tweet-conversation")
-  tweetTab.setAttribute("href", `https://github.com/login/oauth/authorize?client_id=${clientId}`)
+  tweetTab.addEventListener("click", tweetTabOnClick)
   clearTab.parentNode.insertBefore(tweetTab, clearTab)
   return tweetTab
 }
@@ -27,7 +26,7 @@ const observeConversationSwitching = () => {
   const container = document.querySelector("#__next")
   const observer = new MutationObserver(() => {
     observer.disconnect()
-    insertTweetTab().addEventListener("click", openPopup)
+    insertTweetTab().addEventListener("click", tweetTabOnClick)
     observer.observe(container, { attributes: true, childList: true })
   })
   observer.observe(container, { attributes: true, childList: true })
@@ -35,8 +34,8 @@ const observeConversationSwitching = () => {
 }
 
 const getCode = () => {
-  const urlParams = new URLSearchParams(window.location.search)
-  return urlParams.get("code")
+  const code = new URL(location.href).searchParams.get("code");
+  return code
 }
 
 const getAccessToken = (code) => {
@@ -50,7 +49,7 @@ const getAccessToken = (code) => {
   headers.append("Content-Type", "application/json")
 
   fetch(url, {
-    method: "GET",
+    method: "POST",
     headers: headers,
     body: JSON.stringify(params),
   })
@@ -110,6 +109,10 @@ const createElementFromDomString = (domString) => {
   return container.firstChild
 }
 
-const openPopup = () => {
-  console.log(location.href)
-}
+;(async () => {
+  await new Promise((resolve) => {
+    window.onload = () => resolve()
+  })
+  insertTweetTab().addEventListener("click", openPopup)
+  const observer = observeConversationSwitching()
+})()
